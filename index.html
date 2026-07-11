@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>WEBRICH Story Studio v1.4 Owner Ready</title>
+  <title>WEBRICH Story Studio v1.5 Owner First</title>
   <style>
     :root{
       --bg:#f7f9fc;
@@ -132,6 +132,20 @@
 .owner-badge{display:inline-flex;align-items:center;gap:6px;border:1px solid #f1d8a5;background:var(--gold-soft);color:#7c5317;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:900}
 .plan-card{border:1px solid var(--line);border-radius:18px;padding:16px;background:#fff}
 .plan-card.owner{border-color:#f0d8a7;background:linear-gradient(135deg,#fff,#fff9ec)}
+
+    .btn:disabled,.btn.disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+    .policy-links{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 6px}
+    .policy-link{border:1px solid var(--line-strong);background:#fff;border-radius:999px;padding:8px 12px;font-weight:800;color:var(--brand);font-size:13px}
+    .modal-overlay{position:fixed;inset:0;background:rgba(15,27,48,.52);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1200}
+    .policy-modal{width:min(760px,100%);max-height:88vh;background:#fff;border-radius:24px;border:1px solid var(--line);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
+    .policy-modal-head{padding:20px 22px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .policy-modal-head h2{margin:0;font-size:20px}.policy-modal-head p{margin:4px 0 0;color:var(--muted);font-size:13px}
+    .policy-scroll{padding:20px 22px;overflow:auto;max-height:48vh;background:#fbfdff;border-bottom:1px solid var(--line)}
+    .policy-scroll h3{margin:18px 0 6px}.policy-scroll p,.policy-scroll li{color:#344258}.policy-scroll ul{padding-left:1.2em}
+    .policy-actions{padding:16px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .usage-meter{height:10px;background:var(--surface-2);border-radius:999px;overflow:hidden;border:1px solid var(--line)}
+    .usage-meter span{display:block;height:100%;background:linear-gradient(135deg,var(--brand),#4b8eea);width:0%}
+
 </style>
 </head>
 <body>
@@ -170,15 +184,21 @@
             <div class="field"><label>パスワード</label><input class="input" type="password" placeholder="8文字以上推奨" /></div>
             <div class="field"><label>確認用</label><input class="input" type="password" placeholder="もう一度入力" /></div>
           </div>
-          <label class="checkline"><input type="checkbox" /> <span>利用規約とプライバシーポリシーに同意します。</span></label>
-          <label class="checkline"><input type="checkbox" /> <span>病歴・家族・借金・感情などの入力は任意であり、公開前に自分で確認します。</span></label>
-          <div class="btn-row"><button id="demoStart" class="btn btn-primary full">デモユーザーではじめる</button><button id="ownerDemoStart" class="btn btn-gold full">オーナーデモで確認</button><button class="btn btn-ghost full">Googleで始める</button></div>
+          <div class="policy-links"><button id="openTermsSignup" class="policy-link" type="button">利用規約を読む</button><button id="openPrivacySignup" class="policy-link" type="button">プライバシーポリシーを読む</button></div>
+          <label class="checkline"><input id="termsCheckSignup" type="checkbox" disabled /> <span>利用規約を確認し、同意します。</span></label>
+          <label class="checkline"><input id="privacyCheckSignup" type="checkbox" disabled /> <span>プライバシーポリシーを確認し、同意します。</span></label>
+          <label class="checkline"><input id="sensitiveCheckSignup" type="checkbox" /> <span>病歴・家族・借金・感情などの入力は任意であり、公開前に自分で確認します。</span></label>
+          <div class="btn-row"><button id="demoStart" class="btn btn-primary full" disabled>デモではじめる</button><button id="googleStart" class="btn btn-ghost full" disabled>Googleで始める</button></div>
           <p class="note" style="margin-top:16px">このv1.4プレビューはローカル保存で動きます。本番ではFirebase Auth + Firestore、または同等の認証・保存基盤へ接続します。</p>
         </div>
         <div id="loginForm" class="hidden">
           <div class="field"><label>メールアドレス</label><input class="input" placeholder="you@example.com" /></div>
           <div class="field"><label>パスワード <span class="hint">パスワードを忘れた方</span></label><input class="input" type="password" /></div>
-          <div class="btn-row"><button id="demoLogin" class="btn btn-primary full">ログインして管理画面へ</button><button id="ownerDemoLogin" class="btn btn-gold full">オーナーデモでログイン</button><button class="btn btn-ghost full">Googleでログイン</button></div>
+          <div class="policy-links"><button id="openTermsLogin" class="policy-link" type="button">利用規約を読む</button><button id="openPrivacyLogin" class="policy-link" type="button">プライバシーポリシーを読む</button></div>
+          <label class="checkline"><input id="termsCheckLogin" type="checkbox" disabled /> <span>利用規約を確認し、同意します。</span></label>
+          <label class="checkline"><input id="privacyCheckLogin" type="checkbox" disabled /> <span>プライバシーポリシーを確認し、同意します。</span></label>
+          <label class="checkline"><input id="sensitiveCheckLogin" type="checkbox" /> <span>個人的情報の入力は任意であり、公開前に自分で確認します。</span></label>
+          <div class="btn-row"><button id="demoLogin" class="btn btn-primary full" disabled>ログインして管理画面へ</button><button id="googleLogin" class="btn btn-ghost full" disabled>Googleでログイン</button></div>
         </div>
       </div>
     </div>
@@ -249,18 +269,33 @@
     </div>
   </div>
 
+
+  <div id="policyOverlay" class="modal-overlay hidden">
+    <div class="policy-modal">
+      <div class="policy-modal-head">
+        <div><h2 id="policyTitle">利用規約</h2><p>最後まで確認すると同意チェックが有効になります。</p></div>
+        <button id="policyClose" class="btn btn-ghost" type="button">閉じる</button>
+      </div>
+      <div id="policyScroll" class="policy-scroll"></div>
+      <div class="policy-actions">
+        <span id="policyHint" class="hint">下までスクロールしてください。</span>
+        <button id="policyConfirm" class="btn btn-primary" disabled type="button">内容を確認しました</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast" class="toast">保存しました</div>
 </div>
 <script>
 (function(){
   'use strict';
-  var STORAGE_KEY='webrichStoryStudioV14';
+  var STORAGE_KEY='webrichStoryStudioV15';
   var state=loadState();
   var currentScreen='dashboard';
   var setupStep=1;
 
   function defaultState(){return {
-    user:{name:'相棒',setupDone:false,purpose:'note連載',tone:'映画のように臨場感',theme:'AIへの挑戦',role:'user',plan:'free',ownerFree:false},
+    user:{name:'相棒',setupDone:false,purpose:'note連載',tone:'映画のように臨場感',theme:'AIへの挑戦',role:'user',plan:'demo',ownerFree:false},
     engine:{mode:'hybrid',articleCount:'24',kindleCount:'9',tone:'cinematic'},
     materials:[
       {id:id(),title:'昨年7月、左目が突然見えなくなった',age:'61歳',category:'病気・再出発',keywords:'失明,角膜移植,不安,未来',visibility:'ぼかして使う',meaning:'AIで生活を支える道具を作りたい理由につながる'},
@@ -272,7 +307,8 @@
       {id:id(),materialTitle:'31歳で2億7600万円の借金を背負った',feeling:'逃げたいが逃げられない重さ',scene:'店の空気、数字の重み、夜の沈黙',unsaid:'助けてほしい。でも誰にも言えなかった',lesson:'人はどん底でも、目の前の一日を進めるしかない'}
     ],
     articles:[],
-    imagePrompts:[]
+    imagePrompts:[],
+    usage:{note:0,kindle:0,images:0}
   }}
   function id(){return 'id_'+Math.random().toString(36).slice(2,10)+'_'+Date.now().toString(36)}
   function loadState(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||defaultState()}catch(e){return defaultState()}}
@@ -287,6 +323,18 @@
     if(p.indexOf('事業')>=0){return {label:'事業ストーリー',lead:'商品や活動の背景として伝わる理念・信頼・導線を優先します。',primary:'engine',primaryText:'事業ストーリー設計へ',steps:['原点になる経験を登録','お客様の悩みと接続','LP用ストーリーを設計','note・SNS導線へ展開']}}
     return {label:'note連載',lead:'1記事ずつ読まれる連載として、回想と次回予告を重視します。',primary:'note',primaryText:'note記事生成へ',steps:['人生素材を1件追加','感情メモで場面を深掘り','note第1話を生成','ヘッダー画像プロンプトを作成']}
   }
+
+  function planLimits(){
+    if(state.user.ownerFree||state.user.plan==='owner-free')return {note:9999,kindle:9999,images:9999,label:'OWNER FREE'};
+    if(state.user.plan==='paid')return {note:100,kindle:10,images:100,label:'有料プラン'};
+    if(state.user.plan==='free')return {note:10,kindle:1,images:20,label:'無料登録'};
+    return {note:5,kindle:1,images:5,label:'デモ'};
+  }
+  function ensureUsage(){ if(!state.usage) state.usage={note:0,kindle:0,images:0}; return state.usage }
+  function canUse(kind){ var u=ensureUsage(), lim=planLimits(); if(state.user.ownerFree)return true; if((u[kind]||0) >= lim[kind]){ toast('デモ制限に達しました。本格利用はログイン登録または有料プランで開放します。'); return false } return true }
+  function countUse(kind){ var u=ensureUsage(); u[kind]=(u[kind]||0)+1; save(); }
+  function usageLine(kind,label){ var u=ensureUsage(), lim=planLimits(), used=u[kind]||0, max=lim[kind], pct=Math.min(100,Math.round(used/max*100)); if(max>9000){return '<div class="soft-note"><b>'+label+'</b>：制限なし</div>'} return '<div class="soft-note"><b>'+label+'</b>：'+used+' / '+max+'<div class="usage-meter" style="margin-top:8px"><span style="width:'+pct+'%"></span></div></div>' }
+
   function applyPurposeDefaults(){
     var p=state.user.purpose||'note連載';
     if(p.indexOf('Kindle')>=0 && p.indexOf('noteから')<0){state.engine.articleCount='auto';state.engine.kindleCount='9'}
@@ -299,9 +347,17 @@
   function qa(sel,root){return Array.prototype.slice.call((root||document).querySelectorAll(sel))}
 
   qa('[data-auth-tab]').forEach(function(btn){btn.addEventListener('click',function(){qa('[data-auth-tab]').forEach(function(b){b.classList.remove('active')});btn.classList.add('active');q('#signupForm').classList.toggle('hidden',btn.dataset.authTab!=='signup');q('#loginForm').classList.toggle('hidden',btn.dataset.authTab!=='login')})});
-  q('#demoStart').addEventListener('click',function(){enterApp('user')});q('#demoLogin').addEventListener('click',function(){enterApp('user')});q('#ownerDemoStart').addEventListener('click',function(){enterApp('owner')});q('#ownerDemoLogin').addEventListener('click',function(){enterApp('owner')});q('#logout').addEventListener('click',function(){q('#adminView').classList.add('hidden');q('#authView').classList.remove('hidden')});
-  function enterApp(role){var name=q('#displayName').value.trim(); if(name){state.user.name=name} if(role==='owner'){state.user.role='owner';state.user.plan='owner-free';state.user.ownerFree=true}else if(!state.user.role){state.user.role='user';state.user.plan='free';state.user.ownerFree=false} updateUserBadge(); q('#authView').classList.add('hidden'); q('#adminView').classList.remove('hidden'); if(!state.user.setupDone){openSetup()} renderAll(); save();}
-  function updateUserBadge(){q('#topUser').textContent=state.user.name||'相棒';var label=state.user.ownerFree?'オーナー無料 / 全機能確認':'ローカルプレビュー';var el=q('#topPlan');if(el)el.textContent=label}
+  var authConsent={signup:{terms:false,privacy:false},login:{terms:false,privacy:false}};
+  function updateAuthButtons(){
+    var signupReady=authConsent.signup.terms&&authConsent.signup.privacy&&q('#sensitiveCheckSignup').checked;
+    var loginReady=authConsent.login.terms&&authConsent.login.privacy&&q('#sensitiveCheckLogin').checked;
+    ['#demoStart','#googleStart'].forEach(function(sel){var b=q(sel); if(b)b.disabled=!signupReady});
+    ['#demoLogin','#googleLogin'].forEach(function(sel){var b=q(sel); if(b)b.disabled=!loginReady});
+  }
+  ['#sensitiveCheckSignup','#sensitiveCheckLogin'].forEach(function(sel){q(sel).addEventListener('change',updateAuthButtons)});
+  q('#demoStart').addEventListener('click',function(){enterApp('demo')});q('#demoLogin').addEventListener('click',function(){enterApp('demo')});q('#googleStart').addEventListener('click',function(){enterApp('demo')});q('#googleLogin').addEventListener('click',function(){enterApp('demo')});q('#logout').addEventListener('click',function(){q('#adminView').classList.add('hidden');q('#authView').classList.remove('hidden')});
+  function enterApp(role){var name=q('#displayName').value.trim(); if(name){state.user.name=name} state.user.role='user'; state.user.plan='demo'; state.user.ownerFree=false; updateUserBadge(); q('#authView').classList.add('hidden'); q('#adminView').classList.remove('hidden'); if(!state.user.setupDone){openSetup()} renderAll(); save();}
+  function updateUserBadge(){q('#topUser').textContent=state.user.name||'相棒';var label=state.user.ownerFree?'オーナー無料 / 全機能利用':planLimits().label+' / ローカル確認';var el=q('#topPlan');if(el)el.textContent=label}
 
   function openSetup(){setupStep=1;renderSetup();q('#setupOverlay').classList.remove('hidden')}
   function renderSetup(){q('#setupProgress').style.width=(setupStep*33.333)+'%';qa('.setup-step').forEach(function(s){s.classList.toggle('active',Number(s.dataset.step)===setupStep)});q('#setupBack').style.visibility=setupStep===1?'hidden':'visible';q('#setupNext').textContent=setupStep===3?'管理画面へ進む':'次へ'}
@@ -319,8 +375,8 @@
   function renderDashboard(){
     var prof=purposeProfile(state.user.purpose);
     updateUserBadge();
-    var ownerNotice=state.user.ownerFree?'<div class="card plan-card owner" style="margin-bottom:18px"><div class="list-item-head"><div><h3>オーナー無料アカウント</h3><p>このアカウントは運営者用として、料金制限なしで全機能を確認できます。本番では公開登録画面から選ばせず、Firebase/Firestoreのroleで付与します。</p></div><span class="owner-badge">OWNER FREE</span></div></div>':'';
-    q('#dashboard').innerHTML=screenHead('ダッシュボード','用途「'+esc(prof.label)+'」に合わせて、今日の作業と生成先を出し分けます。')+ownerNotice+
+    var usageNotice='<div class="grid cols-3" style="margin-bottom:18px">'+usageLine('note','note記事生成')+usageLine('kindle','Kindle生成')+usageLine('images','画像プロンプト')+'</div>';var ownerNotice=state.user.ownerFree?'<div class="card plan-card owner" style="margin-bottom:18px"><div class="list-item-head"><div><h3>オーナー無料アカウント</h3><p>このアカウントは運営者用として、料金制限なしで全機能を確認できます。本番では公開登録画面から選ばせず、Firebase/Firestoreのroleで付与します。</p></div><span class="owner-badge">OWNER FREE</span></div></div>':'';
+    q('#dashboard').innerHTML=usageNotice+screenHead('ダッシュボード','用途「'+esc(prof.label)+'」に合わせて、今日の作業と生成先を出し分けます。')+ownerNotice+
       '<div class="callout"><div><h3>'+esc(prof.label)+'モードで作業を始めましょう。</h3><p>'+esc(prof.lead)+' 標準では「新PASONA × 神話物語 × 回想型」で、読み手が自然にのめり込む構成を使います。</p></div><button class="btn btn-primary" data-go="'+prof.primary+'">'+esc(prof.primaryText)+'</button></div>'+ 
       '<div class="grid cols-4"><div class="card stat"><div><div class="stat-label">人生素材</div><div class="stat-sub">登録済み</div></div><div class="stat-num">'+state.materials.length+'</div></div><div class="card stat"><div><div class="stat-label">感情メモ</div><div class="stat-sub">臨場感の元</div></div><div class="stat-num">'+state.emotions.length+'</div></div><div class="card stat"><div><div class="stat-label">記事</div><div class="stat-sub">下書き保存</div></div><div class="stat-num">'+state.articles.length+'</div></div><div class="card stat"><div><div class="stat-label">画像案</div><div class="stat-sub">生成済み</div></div><div class="stat-num">'+state.imagePrompts.length+'</div></div></div>'+ 
       '<div class="grid cols-2" style="margin-top:18px"><div class="card"><h3>今日のおすすめ作業</h3><p>'+prof.steps.map(function(x,i){return (i+1)+'. '+esc(x)}).join('<br>')+'</p><div class="btn-row"><button class="btn btn-soft" data-go="materials">素材を追加</button><button class="btn btn-soft" data-go="'+prof.primary+'">'+esc(prof.primaryText)+'</button></div></div><div class="card"><h3>現在の生成設定</h3><div class="pill-row"><span class="pill blue">'+esc(prof.label)+'</span><span class="pill blue">'+labelMode(state.engine.mode)+'</span><span class="pill gold">note '+state.engine.articleCount+'記事</span><span class="pill green">Kindle '+state.engine.kindleCount+'章</span></div><p style="margin-top:12px">初回セットアップの利用目的に合わせ、表示する導線・おすすめ作業・記事数の初期値を変えています。</p></div></div>';
@@ -341,33 +397,44 @@
 
   function renderNote(){q('#note').innerHTML=screenHead('note記事生成','現在のAI挑戦を本筋に、過去の回想を差し込みながら連載を作ります。')+'<div class="grid cols-2"><div class="card"><h3>生成オプション</h3><div class="field"><label>今回使う素材</label><select id="noteMat" class="select">'+state.materials.map(function(m){return '<option>'+esc(m.title)+'</option>'}).join('')+'</select></div><div class="field"><label>記事の役割</label><select id="noteRole" class="select"><option>連載の入口</option><option>過去の回想</option><option>転機の説明</option><option>AIツールへの接続</option><option>次回への橋渡し</option></select></div><div class="field"><label>読者に残したい感情</label><input id="noteFeel" class="input" value="人生はまだ作り直せる"></div><button id="genNote" class="btn btn-primary full">note記事を生成</button></div><div class="card"><h3>記事構造</h3><div class="pill-row"><span class="pill blue">新PASONA</span><span class="pill gold">神話物語</span><span class="pill green">回想型</span></div><p style="margin-top:12px">導入 → 共感 → 回想 → 現在への意味付け → 読者への気づき → 次回予告 の流れで生成します。</p></div></div><div class="card" style="margin-top:18px"><h3>生成結果</h3><div id="noteOut" class="output light">まだ生成されていません。</div><div class="btn-row"><button id="saveNote" class="btn btn-soft">記事管理へ保存</button><button id="copyNote" class="btn btn-ghost">コピー</button></div></div>';q('#genNote').addEventListener('click',generateNote);q('#saveNote').addEventListener('click',function(){var text=q('#noteOut').textContent;if(!text||text==='まだ生成されていません。'){toast('先に生成してください');return}state.articles.unshift({id:id(),type:'note',title:firstLine(text),status:'下書き',body:text,created:new Date().toLocaleDateString('ja-JP')});save();renderAll();toast('記事管理へ保存しました')});q('#copyNote').addEventListener('click',function(){copyText(q('#noteOut').textContent)})}
   function firstLine(t){return String(t).split('\n').find(Boolean)||'無題'}
-  function generateNote(){var mat=state.materials.find(function(m){return m.title===q('#noteMat').value})||state.materials[0];var emo=state.emotions.find(function(e){return e.materialTitle===(mat&&mat.title)})||state.emotions[0]||{};var title='第1話：'+(mat?mat.title:'61歳からAIを学び始めた理由');var text=title+'\n\n【リード】\n私は、人生の後半でAIを学ぶことになるとは思っていませんでした。けれど、見えることが当たり前ではなくなった日から、未来の作り方を変えなければならないと感じるようになりました。\n\n【共感】\n年齢、病気、家族、仕事、お金。人生には、簡単に前向きになれない出来事があります。無理に笑えるほど軽くもなく、誰かに話せるほど整理もできていない。そんな経験ほど、心の奥に残ります。\n\n【回想】\n'+(mat?mat.title:'その出来事')+'。その時の感情は「'+(emo.feeling||'不安と静かな焦り')+'」でした。見えていた景色は、'+(emo.scene||'白い光と、言葉にならない沈黙')+'。本当は「'+(emo.unsaid||'この先どうすればいいのか')+'」と言いたかったのかもしれません。\n\n【現在への接続】\nだから私は、AIをただの流行として見ていません。自分の生活を守る杖であり、同じように不安を抱える人の道具になり得るものだと感じています。\n\n【読者への気づき】\n過去の悩みは、消えなくてもいい。形を変えれば、誰かの役に立つ宝物になることがあります。\n\n【次回予告】\n次回は、この思いの原点になった過去の体験へ、少しだけ話を戻します。';q('#noteOut').textContent=text}
+  function generateNote(){if(!canUse('note'))return; countUse('note'); var mat=state.materials.find(function(m){return m.title===q('#noteMat').value})||state.materials[0];var emo=state.emotions.find(function(e){return e.materialTitle===(mat&&mat.title)})||state.emotions[0]||{};var title='第1話：'+(mat?mat.title:'61歳からAIを学び始めた理由');var text=title+'\n\n【リード】\n私は、人生の後半でAIを学ぶことになるとは思っていませんでした。けれど、見えることが当たり前ではなくなった日から、未来の作り方を変えなければならないと感じるようになりました。\n\n【共感】\n年齢、病気、家族、仕事、お金。人生には、簡単に前向きになれない出来事があります。無理に笑えるほど軽くもなく、誰かに話せるほど整理もできていない。そんな経験ほど、心の奥に残ります。\n\n【回想】\n'+(mat?mat.title:'その出来事')+'。その時の感情は「'+(emo.feeling||'不安と静かな焦り')+'」でした。見えていた景色は、'+(emo.scene||'白い光と、言葉にならない沈黙')+'。本当は「'+(emo.unsaid||'この先どうすればいいのか')+'」と言いたかったのかもしれません。\n\n【現在への接続】\nだから私は、AIをただの流行として見ていません。自分の生活を守る杖であり、同じように不安を抱える人の道具になり得るものだと感じています。\n\n【読者への気づき】\n過去の悩みは、消えなくてもいい。形を変えれば、誰かの役に立つ宝物になることがあります。\n\n【次回予告】\n次回は、この思いの原点になった過去の体験へ、少しだけ話を戻します。';q('#noteOut').textContent=text}
 
-  function renderKindle(){q('#kindle').innerHTML=screenHead('Kindle原稿生成','note連載を一冊の本として再編集するための章立てを作ります。')+'<div class="card"><h3>Kindle章立て案</h3><p>現在の素材数と生成エンジン設定をもとに章立てを作ります。</p><div class="btn-row"><button id="genKindle" class="btn btn-primary">章立てを生成</button><button id="saveKindle" class="btn btn-soft">記事管理へ保存</button></div><div id="kindleOut" class="output light" style="margin-top:16px">まだ生成されていません。</div></div>';q('#genKindle').addEventListener('click',function(){q('#kindleOut').textContent=kindleDraft()});q('#saveKindle').addEventListener('click',function(){var text=q('#kindleOut').textContent;if(text==='まだ生成されていません。'){toast('先に生成してください');return}state.articles.unshift({id:id(),type:'kindle',title:'Kindle章立て案',status:'構成案',body:text,created:new Date().toLocaleDateString('ja-JP')});save();renderAll();toast('Kindle構成を保存しました')})}
+  function renderKindle(){q('#kindle').innerHTML=screenHead('Kindle原稿生成','note連載を一冊の本として再編集するための章立てを作ります。')+'<div class="card"><h3>Kindle章立て案</h3><p>現在の素材数と生成エンジン設定をもとに章立てを作ります。</p><div class="btn-row"><button id="genKindle" class="btn btn-primary">章立てを生成</button><button id="saveKindle" class="btn btn-soft">記事管理へ保存</button></div><div id="kindleOut" class="output light" style="margin-top:16px">まだ生成されていません。</div></div>';q('#genKindle').addEventListener('click',function(){if(!canUse('kindle'))return; countUse('kindle'); q('#kindleOut').textContent=kindleDraft(); renderAll(); showScreen('kindle')});q('#saveKindle').addEventListener('click',function(){var text=q('#kindleOut').textContent;if(text==='まだ生成されていません。'){toast('先に生成してください');return}state.articles.unshift({id:id(),type:'kindle',title:'Kindle章立て案',status:'構成案',body:text,created:new Date().toLocaleDateString('ja-JP')});save();renderAll();toast('Kindle構成を保存しました')})}
   function kindleDraft(){return 'タイトル案：見えにくい未来に、AIで道をつくる\n副題：失明、角膜移植、借金、そして61歳からのAIアプリ開発\n\nまえがき：悩みを、宝物に変えるということ\n\n第1章　昨年7月、左目が突然見えなくなった日\n第2章　17歳で始まった目の病気\n第3章　20歳の失明と角膜移植の記憶\n第4章　家族、仕事、借金。人生が予定通りに進まない理由\n第5章　31歳で背負った2億7600万円の重さ\n第6章　苦労は美談ではない。でも人の痛みを想像する力になる\n第7章　61歳でAIアプリを学び始めた\n第8章　AIは魔法ではなく、生活を守る杖だった\n第9章　見えにくい未来に、AIで道をつくる\n\nあとがき：人生には、まだ続きがある'}
 
-  function renderImages(){q('#images').innerHTML=screenHead('画像プロンプト','noteヘッダー・記事中画像・Kindle表紙のプロンプトを作成します。')+'<div class="grid cols-2"><div class="card"><h3>画像設計</h3><div class="field"><label>画像タイプ</label><select id="imgType" class="select"><option>noteヘッダー</option><option>note記事中画像</option><option>Kindle表紙</option><option>Kindle章扉</option><option>SNS告知画像</option></select></div><div class="field"><label>使う記事・素材</label><select id="imgMat" class="select">'+state.materials.map(function(m){return '<option>'+esc(m.title)+'</option>'}).join('')+'</select></div><div class="field"><label>雰囲気</label><select id="imgMood" class="select"><option>静かだが希望がある</option><option>映画のワンシーンのよう</option><option>やさしいイラスト風</option><option>白背景で読みやすい</option><option>日本的で落ち着いた雰囲気</option></select></div><button id="genImage" class="btn btn-primary full">画像プロンプトを生成</button></div><div class="card"><h3>生成結果</h3><div id="imgOut" class="output light">まだ生成されていません。</div><div class="btn-row"><button id="saveImage" class="btn btn-soft">画像案を保存</button><button id="copyImage" class="btn btn-ghost">コピー</button></div></div></div><div class="list" style="margin-top:18px">'+state.imagePrompts.map(function(p){return '<div class="list-item"><div class="list-item-head"><h4>'+esc(p.type)+'</h4><span class="pill blue">保存済み</span></div><p>'+esc(p.prompt)+'</p></div>'}).join('')+'</div>';q('#genImage').addEventListener('click',function(){q('#imgOut').textContent=imageDraft()});q('#saveImage').addEventListener('click',function(){var text=q('#imgOut').textContent;if(text==='まだ生成されていません。'){toast('先に生成してください');return}state.imagePrompts.unshift({id:id(),type:q('#imgType').value,prompt:text});save();renderAll();toast('画像プロンプトを保存しました')});q('#copyImage').addEventListener('click',function(){copyText(q('#imgOut').textContent)})}
+  function renderImages(){q('#images').innerHTML=screenHead('画像プロンプト','noteヘッダー・記事中画像・Kindle表紙のプロンプトを作成します。')+'<div class="grid cols-2"><div class="card"><h3>画像設計</h3><div class="field"><label>画像タイプ</label><select id="imgType" class="select"><option>noteヘッダー</option><option>note記事中画像</option><option>Kindle表紙</option><option>Kindle章扉</option><option>SNS告知画像</option></select></div><div class="field"><label>使う記事・素材</label><select id="imgMat" class="select">'+state.materials.map(function(m){return '<option>'+esc(m.title)+'</option>'}).join('')+'</select></div><div class="field"><label>雰囲気</label><select id="imgMood" class="select"><option>静かだが希望がある</option><option>映画のワンシーンのよう</option><option>やさしいイラスト風</option><option>白背景で読みやすい</option><option>日本的で落ち着いた雰囲気</option></select></div><button id="genImage" class="btn btn-primary full">画像プロンプトを生成</button></div><div class="card"><h3>生成結果</h3><div id="imgOut" class="output light">まだ生成されていません。</div><div class="btn-row"><button id="saveImage" class="btn btn-soft">画像案を保存</button><button id="copyImage" class="btn btn-ghost">コピー</button></div></div></div><div class="list" style="margin-top:18px">'+state.imagePrompts.map(function(p){return '<div class="list-item"><div class="list-item-head"><h4>'+esc(p.type)+'</h4><span class="pill blue">保存済み</span></div><p>'+esc(p.prompt)+'</p></div>'}).join('')+'</div>';q('#genImage').addEventListener('click',function(){if(!canUse('images'))return; countUse('images'); q('#imgOut').textContent=imageDraft(); renderAll(); showScreen('images')});q('#saveImage').addEventListener('click',function(){var text=q('#imgOut').textContent;if(text==='まだ生成されていません。'){toast('先に生成してください');return}state.imagePrompts.unshift({id:id(),type:q('#imgType').value,prompt:text});save();renderAll();toast('画像プロンプトを保存しました')});q('#copyImage').addEventListener('click',function(){copyText(q('#imgOut').textContent)})}
   function imageDraft(){return '画像タイプ：'+q('#imgType').value+'\n目的：記事の感情を一瞬で伝え、本文へ自然に引き込む\n構図：静かな白い部屋、ノートPCの光、少し先に差し込む朝の光。人物は後ろ姿で、個人を特定しない。\n雰囲気：'+q('#imgMood').value+'\n画像生成プロンプト：60代男性の後ろ姿、ノートパソコンの光、静かな部屋、窓の外に薄い朝焼け、暗さの中に小さな希望、cinematic, soft light, clean composition, no text, note article header style\n画像内テキスト案：見えにくい未来に、AIで道をつくる\naltテキスト：AI学習に向かう再出発の静かなイメージ'}
 
   function renderArticles(){q('#articles').innerHTML=screenHead('記事管理','生成したnote・Kindle構成・画像案を一覧で管理します。','<button id="exportMd" class="btn btn-primary">Markdown出力</button>')+'<div class="card"><table class="table"><thead><tr><th>種別</th><th>タイトル</th><th>状態</th><th>作成日</th><th>操作</th></tr></thead><tbody>'+state.articles.map(function(a){return '<tr><td><span class="pill blue">'+esc(a.type)+'</span></td><td><b>'+esc(a.title)+'</b></td><td>'+esc(a.status)+'</td><td>'+esc(a.created)+'</td><td><button class="btn btn-ghost" data-view-article="'+a.id+'">表示</button> <button class="btn btn-danger" data-delete="article" data-id="'+a.id+'">削除</button></td></tr>'}).join('')+'</tbody></table><div id="articleView" class="output light" style="margin-top:16px">記事を選ぶと本文が表示されます。</div></div>';q('#exportMd').addEventListener('click',exportMarkdown);qa('[data-view-article]').forEach(function(b){b.addEventListener('click',function(){var a=state.articles.find(function(x){return x.id===b.dataset.viewArticle});q('#articleView').textContent=a?a.body:'見つかりません'})});bindDelete(q('#articles'),'article')}
   function exportMarkdown(){var md=state.articles.map(function(a){return '# '+a.title+'\n\n種別：'+a.type+' / 状態：'+a.status+'\n\n'+a.body}).join('\n\n---\n\n');if(!md)md='まだ記事がありません。';download('webrich-story-studio-export.md',md);toast('Markdownを書き出しました')}
 
-  function renderSettings(){var planLabel=state.user.ownerFree?'オーナー無料 / 全機能確認':'一般ユーザー / Freeデモ';q('#settings').innerHTML=screenHead('設定・規約','AIプロバイダー、アカウント権限、規約、バックアップを管理します。')+'<div class="grid cols-2"><div class="card"><h3>AI設定</h3><p>本番ではAPIキーを画面に保存せず、Cloudflare Workers / Firebase Functions側で管理します。</p><div class="field"><label>標準生成</label><select class="select"><option>Gemini 2.5 Flash</option><option>OpenAI GPT-5.4 mini</option><option>自動選択</option></select></div><div class="field"><label>高品質生成</label><select class="select"><option>OpenAI GPT-5.4 mini</option><option>GPT-5.5</option><option>Gemini 2.5 Flash</option></select></div><button class="btn btn-primary">設定を保存</button></div><div class="card"><h3>アカウント・料金</h3><div class="plan-card '+(state.user.ownerFree?'owner':'')+'"><div class="list-item-head"><div><b>'+esc(planLabel)+'</b><p style="margin-top:6px">オーナー無料権限は公開登録画面では選ばせず、管理者メールのホワイトリストまたはFirestoreのroleで付与します。</p></div>'+(state.user.ownerFree?'<span class="owner-badge">OWNER FREE</span>':'<span class="pill blue">FREE</span>')+'</div></div><div class="btn-row"><button id="switchOwner" class="btn btn-gold">オーナーデモに切替</button><button id="switchUser" class="btn btn-ghost">一般デモに戻す</button></div></div><div class="card"><h3>バックアップ</h3><p>ローカル版ではブラウザ内に保存されています。JSONで控えを取れます。</p><div class="btn-row"><button id="exportJson" class="btn btn-soft">JSONバックアップ</button><button id="resetData" class="btn btn-danger">データ初期化</button></div></div><div class="card"><h3>本番実装メモ</h3><div class="output light">推奨：同じアプリ内に role を持たせる
-
-一般ユーザー：role=user / plan=free または paid
-オーナー：role=owner / plan=owner-free
-管理者：role=admin
-
-重要：ログイン画面に「オーナー登録」を公開表示しない。
-ownerEmails をサーバー側環境変数、またはFirestoreの管理者コレクションで判定する。</div></div></div><div class="card" style="margin-top:18px"><h3>利用規約・プライバシー要点</h3><div class="output light">・病歴、家族、借金、感情などの入力は任意です。
-・公開したくない内容は「ぼかして使う」「自分用メモ」を選択します。
-・AI生成文は投稿・出版前にユーザー自身が確認します。
-・本番では利用規約、プライバシーポリシー、特商法表記をLP下部に設置します。</div></div>';q('#switchOwner').addEventListener('click',function(){state.user.role='owner';state.user.plan='owner-free';state.user.ownerFree=true;save();renderAll();toast('オーナーデモに切り替えました')});q('#switchUser').addEventListener('click',function(){state.user.role='user';state.user.plan='free';state.user.ownerFree=false;save();renderAll();toast('一般デモに戻しました')});q('#exportJson').addEventListener('click',function(){download('webrich-story-studio-backup.json',JSON.stringify(state,null,2));toast('JSONを書き出しました')});q('#resetData').addEventListener('click',function(){if(confirm('ローカルデータを初期化しますか？')){localStorage.removeItem(STORAGE_KEY);state=defaultState();save();renderAll();toast('初期化しました')}})}
+  function renderSettings(){
+    var planLabel=state.user.ownerFree?'オーナー無料 / 全機能利用':planLimits().label+' / ローカル確認';
+    var memo='デモ：note5記事 / Kindle1回 / 画像5枚\n無料登録：少量生成 + クラウド保存\n有料：月額プランに応じて回数開放\nオーナー：role=owner / plan=owner-free\n\n重要：公開画面にオーナー登録ボタンは出さない。\n相棒のログインメールをFirebase側で判定し、裏側で無料権限を付与する。';
+    var policy='・病歴、家族、借金、感情などの入力は任意です。\n・公開したくない内容は「ぼかして使う」「自分用メモ」を選択します。\n・AI生成文は投稿・出版前にユーザー自身が確認します。\n・新規登録時は利用規約とプライバシーポリシーを最後まで確認してから同意する設計です。';
+    q('#settings').innerHTML=screenHead('設定・規約','AIプロバイダー、アカウント権限、規約、バックアップを管理します。')+'<div class="grid cols-2"><div class="card"><h3>AI設定</h3><p>本番ではAPIキーを画面に保存せず、Cloudflare Workers / Firebase Functions側で管理します。</p><div class="field"><label>標準生成</label><select class="select"><option>Gemini 2.5 Flash</option><option>OpenAI GPT-5.4 mini</option><option>自動選択</option></select></div><div class="field"><label>高品質生成</label><select class="select"><option>OpenAI GPT-5.4 mini</option><option>GPT-5.5</option><option>Gemini 2.5 Flash</option></select></div><button class="btn btn-primary">設定を保存</button></div><div class="card"><h3>アカウント・料金</h3><div class="plan-card '+(state.user.ownerFree?'owner':'')+'"><div class="list-item-head"><div><b>'+esc(planLabel)+'</b><p style="margin-top:6px">販売版では通常ログイン後にFirestoreのrole / planで制限を判定します。相棒のメールアドレスだけ owner-free を裏側で付与します。</p></div>'+(state.user.ownerFree?'<span class="owner-badge">OWNER FREE</span>':'<span class="pill blue">DEMO</span>')+'</div></div><div style="display:grid;gap:10px;margin-top:12px">'+usageLine('note','note記事生成')+usageLine('kindle','Kindle生成')+usageLine('images','画像プロンプト')+'</div></div><div class="card"><h3>バックアップ</h3><p>ローカル版ではブラウザ内に保存されています。JSONで控えを取れます。</p><div class="btn-row"><button id="exportJson" class="btn btn-soft">JSONバックアップ</button><button id="resetData" class="btn btn-danger">データ初期化</button></div></div><div class="card"><h3>販売版実装メモ</h3><div class="output light">'+esc(memo)+'</div></div></div><div class="card" style="margin-top:18px"><h3>利用規約・プライバシー要点</h3><div class="output light">'+esc(policy)+'</div></div>';
+    q('#exportJson').addEventListener('click',function(){download('webrich-story-studio-backup.json',JSON.stringify(state,null,2));toast('JSONを書き出しました')});
+    q('#resetData').addEventListener('click',function(){if(confirm('ローカルデータを初期化しますか？')){localStorage.removeItem(STORAGE_KEY);state=defaultState();save();renderAll();toast('初期化しました')}})
+  }
 
   function bindGo(root){qa('[data-go]',root).forEach(function(b){b.addEventListener('click',function(){showScreen(b.dataset.go)})})}
   function bindDelete(root,type){qa('[data-delete]',root).forEach(function(b){b.addEventListener('click',function(){if(!confirm('削除しますか？'))return;var idv=b.dataset.id;if(type==='material')state.materials=state.materials.filter(function(x){return x.id!==idv});if(type==='emotion')state.emotions=state.emotions.filter(function(x){return x.id!==idv});if(type==='article')state.articles=state.articles.filter(function(x){return x.id!==idv});save();renderAll();toast('削除しました')})})}
   function copyText(t){if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){toast('コピーしました')})}else{toast('コピー機能はHTTPS環境で有効です')}}
   function download(filename,text){var blob=new Blob([text],{type:'text/plain;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},100)}
+
+
+  var currentPolicyKind=null;
+  var policyTexts={
+    terms:'<h3>WEBRICH Story Studio 利用規約（ドラフト）</h3><p>本規約は、WEBRICH Story Studioを利用する方と運営者との間の基本的な条件を定めるものです。</p><h3>1. サービス内容</h3><p>本サービスは、利用者が入力した人生経験、感情メモ、記事テーマ等をもとに、note記事、Kindle原稿、画像プロンプト等の作成を支援するAI物語作成サポートツールです。</p><h3>2. 入力内容について</h3><p>病歴、家族、借金、感情などの入力は任意です。公開したくない情報は入力しない、または「ぼかして使う」「自分用メモ」を選択してください。</p><h3>3. AI生成文の確認</h3><p>AIが生成した文章、タイトル、画像プロンプト等は、投稿・出版・販売前に利用者自身が内容、事実関係、第三者への配慮、権利侵害の有無を確認してください。</p><h3>4. 禁止事項</h3><ul><li>第三者を誹謗中傷する目的での利用</li><li>虚偽情報を事実のように公開する行為</li><li>他者の個人情報を無断で入力・公開する行為</li><li>法令または公序良俗に反する利用</li></ul><h3>5. 免責</h3><p>本サービスは文章作成を支援するものであり、医療、法律、金融、心理療法等の専門的助言を提供するものではありません。</p><h3>6. 料金・プラン</h3><p>デモ、無料、有料、オーナー無料などのプランごとに利用上限が設定される場合があります。</p><h3>7. 規約変更</h3><p>運営者は必要に応じて本規約を変更できます。重要な変更がある場合は、再同意を求める場合があります。</p>',
+    privacy:'<h3>プライバシーポリシー（ドラフト）</h3><p>本ポリシーは、WEBRICH Story Studioにおける個人情報の取扱いを説明するものです。</p><h3>1. 取得する情報</h3><ul><li>メールアドレス、表示名などのアカウント情報</li><li>人生素材カード、感情メモ、記事下書き、画像プロンプト</li><li>利用プラン、生成回数、作成日時などの利用情報</li></ul><h3>2. 利用目的</h3><p>取得した情報は、アカウント管理、記事・原稿作成支援、データ保存、利用制限、サービス改善、問い合わせ対応のために利用します。</p><h3>3. 要配慮情報について</h3><p>病歴、家族、借金、感情などの情報は入力が任意です。利用者自身が公開範囲を判断してください。本番版では本人同意を前提に取り扱います。</p><h3>4. AI APIへの送信</h3><p>AI生成機能を利用する場合、入力内容がGemini、OpenAI等の外部AI APIへ送信される場合があります。APIキーは画面側ではなくサーバー側で管理します。</p><h3>5. 第三者提供</h3><p>法令に基づく場合を除き、本人の同意なく個人情報を第三者へ販売・提供しません。</p><h3>6. 保存期間</h3><p>利用者が削除した情報、退会したアカウントに紐づく情報は、運営上必要な期間を経て削除します。</p><h3>7. 問い合わせ</h3><p>個人情報の確認、修正、削除については、運営者窓口へお問い合わせください。</p>'
+  };
+  function openPolicy(kind,form){currentPolicyKind={kind:kind,form:form};q('#policyTitle').textContent=kind==='terms'?'利用規約':'プライバシーポリシー';q('#policyScroll').innerHTML=policyTexts[kind];q('#policyOverlay').classList.remove('hidden');q('#policyConfirm').disabled=true;q('#policyHint').textContent='下までスクロールしてください。';q('#policyScroll').scrollTop=0}
+  function closePolicy(){q('#policyOverlay').classList.add('hidden')}
+  ['Signup','Login'].forEach(function(form){q('#openTerms'+form).addEventListener('click',function(){openPolicy('terms',form.toLowerCase())});q('#openPrivacy'+form).addEventListener('click',function(){openPolicy('privacy',form.toLowerCase())})});
+  q('#policyClose').addEventListener('click',closePolicy);
+  q('#policyScroll').addEventListener('scroll',function(){var el=q('#policyScroll');if(el.scrollTop+el.clientHeight>=el.scrollHeight-8){q('#policyConfirm').disabled=false;q('#policyHint').textContent='確認ボタンを押すと同意チェックが有効になります。'}});
+  q('#policyConfirm').addEventListener('click',function(){if(!currentPolicyKind)return;var form=currentPolicyKind.form,kind=currentPolicyKind.kind;authConsent[form][kind]=true;var id='#'+(kind==='terms'?'termsCheck':'privacyCheck')+(form==='signup'?'Signup':'Login');var cb=q(id);cb.disabled=false;cb.checked=true;closePolicy();updateAuthButtons();toast((kind==='terms'?'利用規約':'プライバシーポリシー')+'を確認しました')});
+  updateAuthButtons();
 
   renderAll();
 })();

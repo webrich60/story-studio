@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>WEBRICH Story Studio v1.5 Owner First</title>
+  <title>WEBRICH Story Studio v1.6 Firebase Auth</title>
   <style>
     :root{
       --bg:#f7f9fc;
@@ -180,25 +180,25 @@
           <div class="form-grid">
             <div class="field"><label>表示名</label><input id="displayName" class="input" placeholder="例：相棒" /></div>
             
-            <div class="field wide"><label>メールアドレス</label><input class="input" placeholder="you@example.com" /></div>
-            <div class="field"><label>パスワード</label><input class="input" type="password" placeholder="8文字以上推奨" /></div>
-            <div class="field"><label>確認用</label><input class="input" type="password" placeholder="もう一度入力" /></div>
+            <div class="field wide"><label>メールアドレス</label><input id="signupEmail" class="input" type="email" placeholder="you@example.com" /></div>
+            <div class="field"><label>パスワード</label><input id="signupPassword" class="input" type="password" placeholder="8文字以上推奨" /></div>
+            <div class="field"><label>確認用</label><input id="signupPasswordConfirm" class="input" type="password" placeholder="もう一度入力" /></div>
           </div>
           <div class="policy-links"><button id="openTermsSignup" class="policy-link" type="button">利用規約を読む</button><button id="openPrivacySignup" class="policy-link" type="button">プライバシーポリシーを読む</button></div>
           <label class="checkline"><input id="termsCheckSignup" type="checkbox" disabled /> <span>利用規約を確認し、同意します。</span></label>
           <label class="checkline"><input id="privacyCheckSignup" type="checkbox" disabled /> <span>プライバシーポリシーを確認し、同意します。</span></label>
           <label class="checkline"><input id="sensitiveCheckSignup" type="checkbox" /> <span>病歴・家族・借金・感情などの入力は任意であり、公開前に自分で確認します。</span></label>
-          <div class="btn-row"><button id="demoStart" class="btn btn-primary full" disabled>デモではじめる</button><button id="googleStart" class="btn btn-ghost full" disabled>Googleで始める</button></div>
-          <p class="note" style="margin-top:16px">このv1.4プレビューはローカル保存で動きます。本番ではFirebase Auth + Firestore、または同等の認証・保存基盤へ接続します。</p>
+          <div class="btn-row"><button id="emailSignup" class="btn btn-primary full" disabled>メールで新規登録</button><button id="googleStart" class="btn btn-ghost full" disabled>Googleで始める</button><button id="demoStart" class="btn btn-soft full" disabled>デモで確認</button></div>
+          <p class="note" style="margin-top:16px">v1.6ではFirebase Authでログインできます。データ保存は次段階のFirestore連携まではブラウザ内保存です。</p>
         </div>
         <div id="loginForm" class="hidden">
-          <div class="field"><label>メールアドレス</label><input class="input" placeholder="you@example.com" /></div>
-          <div class="field"><label>パスワード <span class="hint">パスワードを忘れた方</span></label><input class="input" type="password" /></div>
+          <div class="field"><label>メールアドレス</label><input id="loginEmail" class="input" type="email" placeholder="you@example.com" /></div>
+          <div class="field"><label>パスワード <button id="passwordReset" class="policy-link" type="button">パスワードを忘れた方</button></label><input id="loginPassword" class="input" type="password" /></div>
           <div class="policy-links"><button id="openTermsLogin" class="policy-link" type="button">利用規約を読む</button><button id="openPrivacyLogin" class="policy-link" type="button">プライバシーポリシーを読む</button></div>
           <label class="checkline"><input id="termsCheckLogin" type="checkbox" disabled /> <span>利用規約を確認し、同意します。</span></label>
           <label class="checkline"><input id="privacyCheckLogin" type="checkbox" disabled /> <span>プライバシーポリシーを確認し、同意します。</span></label>
           <label class="checkline"><input id="sensitiveCheckLogin" type="checkbox" /> <span>個人的情報の入力は任意であり、公開前に自分で確認します。</span></label>
-          <div class="btn-row"><button id="demoLogin" class="btn btn-primary full" disabled>ログインして管理画面へ</button><button id="googleLogin" class="btn btn-ghost full" disabled>Googleでログイン</button></div>
+          <div class="btn-row"><button id="emailLogin" class="btn btn-primary full" disabled>メールでログイン</button><button id="googleLogin" class="btn btn-ghost full" disabled>Googleでログイン</button><button id="demoLogin" class="btn btn-soft full" disabled>デモで確認</button></div>
         </div>
       </div>
     </div>
@@ -286,10 +286,28 @@
 
   <div id="toast" class="toast">保存しました</div>
 </div>
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, sendPasswordResetEmail, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCr4GpvZYGTXCPjEeR5SGRXWuMQrOtLNgI",
+  authDomain: "story-studio-7db73.firebaseapp.com",
+  projectId: "story-studio-7db73",
+  storageBucket: "story-studio-7db73.firebasestorage.app",
+  messagingSenderId: "254492140152",
+  appId: "1:254492140152:web:2aabc9879af84187aa838d",
+  measurementId: "G-YYVH42XSE5"
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const firebaseAuth = getAuth(firebaseApp);
+const googleProvider = new GoogleAuthProvider();
+
 (function(){
   'use strict';
-  var STORAGE_KEY='webrichStoryStudioV15';
+  var BASE_STORAGE_KEY='webrichStoryStudioV16';
+  var STORAGE_KEY=BASE_STORAGE_KEY+'_demo';
   var state=loadState();
   var currentScreen='dashboard';
   var setupStep=1;
@@ -351,13 +369,61 @@
   function updateAuthButtons(){
     var signupReady=authConsent.signup.terms&&authConsent.signup.privacy&&q('#sensitiveCheckSignup').checked;
     var loginReady=authConsent.login.terms&&authConsent.login.privacy&&q('#sensitiveCheckLogin').checked;
-    ['#demoStart','#googleStart'].forEach(function(sel){var b=q(sel); if(b)b.disabled=!signupReady});
-    ['#demoLogin','#googleLogin'].forEach(function(sel){var b=q(sel); if(b)b.disabled=!loginReady});
+    ['#emailSignup','#demoStart','#googleStart'].forEach(function(sel){var b=q(sel); if(b)b.disabled=!signupReady});
+    ['#emailLogin','#demoLogin','#googleLogin'].forEach(function(sel){var b=q(sel); if(b)b.disabled=!loginReady});
   }
   ['#sensitiveCheckSignup','#sensitiveCheckLogin'].forEach(function(sel){q(sel).addEventListener('change',updateAuthButtons)});
-  q('#demoStart').addEventListener('click',function(){enterApp('demo')});q('#demoLogin').addEventListener('click',function(){enterApp('demo')});q('#googleStart').addEventListener('click',function(){enterApp('demo')});q('#googleLogin').addEventListener('click',function(){enterApp('demo')});q('#logout').addEventListener('click',function(){q('#adminView').classList.add('hidden');q('#authView').classList.remove('hidden')});
-  function enterApp(role){var name=q('#displayName').value.trim(); if(name){state.user.name=name} state.user.role='user'; state.user.plan='demo'; state.user.ownerFree=false; updateUserBadge(); q('#authView').classList.add('hidden'); q('#adminView').classList.remove('hidden'); if(!state.user.setupDone){openSetup()} renderAll(); save();}
-  function updateUserBadge(){q('#topUser').textContent=state.user.name||'相棒';var label=state.user.ownerFree?'オーナー無料 / 全機能利用':planLimits().label+' / ローカル確認';var el=q('#topPlan');if(el)el.textContent=label}
+  function isOwnerEmail(email){return ['takebou2014@gmail.com','webrich60@gmail.com'].indexOf(String(email||'').toLowerCase())>=0}
+  function switchStorageFor(kind,uid){STORAGE_KEY=BASE_STORAGE_KEY+'_'+kind+'_'+(uid||'guest');state=loadState();}
+  function applyFirebaseUser(user){
+    var email=user.email||'';
+    var owner=isOwnerEmail(email);
+    state.user.name=user.displayName||email.split('@')[0]||state.user.name||'相棒';
+    state.user.email=email;
+    state.user.uid=user.uid;
+    state.user.role=owner?'owner':'user';
+    state.user.plan=owner?'owner-free':'free';
+    state.user.ownerFree=owner;
+    save();
+  }
+  function enterApp(role,user){
+    if(user){switchStorageFor('firebase',user.uid);applyFirebaseUser(user)}
+    else {switchStorageFor('demo','local');var name=q('#displayName').value.trim(); if(name){state.user.name=name} state.user.role='user'; state.user.plan='demo'; state.user.ownerFree=false; save()}
+    updateUserBadge(); q('#authView').classList.add('hidden'); q('#adminView').classList.remove('hidden'); if(!state.user.setupDone){openSetup()} renderAll(); save();
+  }
+  async function handleEmailSignup(){
+    try{
+      var email=q('#signupEmail').value.trim(); var pass=q('#signupPassword').value; var pass2=q('#signupPasswordConfirm').value; var name=q('#displayName').value.trim();
+      if(!email||!pass){toast('メールアドレスとパスワードを入力してください');return}
+      if(pass.length<6){toast('Firebaseでは6文字以上のパスワードが必要です');return}
+      if(pass!==pass2){toast('確認用パスワードが一致しません');return}
+      var cred=await createUserWithEmailAndPassword(firebaseAuth,email,pass);
+      if(name){await updateProfile(cred.user,{displayName:name})}
+      enterApp('firebase',cred.user);toast('新規登録しました');
+    }catch(e){toast('新規登録エラー：'+(e.message||e.code))}
+  }
+  async function handleEmailLogin(){
+    try{
+      var email=q('#loginEmail').value.trim(); var pass=q('#loginPassword').value;
+      if(!email||!pass){toast('メールアドレスとパスワードを入力してください');return}
+      var cred=await signInWithEmailAndPassword(firebaseAuth,email,pass);
+      enterApp('firebase',cred.user);toast('ログインしました');
+    }catch(e){toast('ログインエラー：'+(e.message||e.code))}
+  }
+  async function handleGoogleLogin(){
+    try{var cred=await signInWithPopup(firebaseAuth,googleProvider);enterApp('firebase',cred.user);toast('Googleでログインしました')}catch(e){toast('Googleログインエラー：'+(e.message||e.code))}
+  }
+  async function handlePasswordReset(){
+    try{var email=q('#loginEmail').value.trim()||q('#signupEmail').value.trim(); if(!email){toast('メールアドレスを入力してください');return} await sendPasswordResetEmail(firebaseAuth,email); toast('パスワード再設定メールを送信しました')}catch(e){toast('送信エラー：'+(e.message||e.code))}
+  }
+  q('#emailSignup').addEventListener('click',handleEmailSignup);
+  q('#emailLogin').addEventListener('click',handleEmailLogin);
+  q('#demoStart').addEventListener('click',function(){enterApp('demo')});q('#demoLogin').addEventListener('click',function(){enterApp('demo')});
+  q('#googleStart').addEventListener('click',handleGoogleLogin);q('#googleLogin').addEventListener('click',handleGoogleLogin);
+  q('#passwordReset').addEventListener('click',handlePasswordReset);
+  q('#logout').addEventListener('click',async function(){try{if(firebaseAuth.currentUser)await signOut(firebaseAuth)}catch(e){} q('#adminView').classList.add('hidden');q('#authView').classList.remove('hidden')});
+  onAuthStateChanged(firebaseAuth,function(user){if(user && q('#adminView').classList.contains('hidden')){enterApp('firebase',user)}});
+  function updateUserBadge(){q('#topUser').textContent=state.user.name||'相棒';var label=state.user.ownerFree?'オーナー無料 / 全機能利用':planLimits().label+(state.user.plan==='demo'?' / ローカル確認':' / Firebase Auth');var el=q('#topPlan');if(el)el.textContent=label}
 
   function openSetup(){setupStep=1;renderSetup();q('#setupOverlay').classList.remove('hidden')}
   function renderSetup(){q('#setupProgress').style.width=(setupStep*33.333)+'%';qa('.setup-step').forEach(function(s){s.classList.toggle('active',Number(s.dataset.step)===setupStep)});q('#setupBack').style.visibility=setupStep===1?'hidden':'visible';q('#setupNext').textContent=setupStep===3?'管理画面へ進む':'次へ'}
@@ -412,7 +478,7 @@
     var planLabel=state.user.ownerFree?'オーナー無料 / 全機能利用':planLimits().label+' / ローカル確認';
     var memo='デモ：note5記事 / Kindle1回 / 画像5枚\n無料登録：少量生成 + クラウド保存\n有料：月額プランに応じて回数開放\nオーナー：role=owner / plan=owner-free\n\n重要：公開画面にオーナー登録ボタンは出さない。\n相棒のログインメールをFirebase側で判定し、裏側で無料権限を付与する。';
     var policy='・病歴、家族、借金、感情などの入力は任意です。\n・公開したくない内容は「ぼかして使う」「自分用メモ」を選択します。\n・AI生成文は投稿・出版前にユーザー自身が確認します。\n・新規登録時は利用規約とプライバシーポリシーを最後まで確認してから同意する設計です。';
-    q('#settings').innerHTML=screenHead('設定・規約','AIプロバイダー、アカウント権限、規約、バックアップを管理します。')+'<div class="grid cols-2"><div class="card"><h3>AI設定</h3><p>本番ではAPIキーを画面に保存せず、Cloudflare Workers / Firebase Functions側で管理します。</p><div class="field"><label>標準生成</label><select class="select"><option>Gemini 2.5 Flash</option><option>OpenAI GPT-5.4 mini</option><option>自動選択</option></select></div><div class="field"><label>高品質生成</label><select class="select"><option>OpenAI GPT-5.4 mini</option><option>GPT-5.5</option><option>Gemini 2.5 Flash</option></select></div><button class="btn btn-primary">設定を保存</button></div><div class="card"><h3>アカウント・料金</h3><div class="plan-card '+(state.user.ownerFree?'owner':'')+'"><div class="list-item-head"><div><b>'+esc(planLabel)+'</b><p style="margin-top:6px">販売版では通常ログイン後にFirestoreのrole / planで制限を判定します。相棒のメールアドレスだけ owner-free を裏側で付与します。</p></div>'+(state.user.ownerFree?'<span class="owner-badge">OWNER FREE</span>':'<span class="pill blue">DEMO</span>')+'</div></div><div style="display:grid;gap:10px;margin-top:12px">'+usageLine('note','note記事生成')+usageLine('kindle','Kindle生成')+usageLine('images','画像プロンプト')+'</div></div><div class="card"><h3>バックアップ</h3><p>ローカル版ではブラウザ内に保存されています。JSONで控えを取れます。</p><div class="btn-row"><button id="exportJson" class="btn btn-soft">JSONバックアップ</button><button id="resetData" class="btn btn-danger">データ初期化</button></div></div><div class="card"><h3>販売版実装メモ</h3><div class="output light">'+esc(memo)+'</div></div></div><div class="card" style="margin-top:18px"><h3>利用規約・プライバシー要点</h3><div class="output light">'+esc(policy)+'</div></div>';
+    q('#settings').innerHTML=screenHead('設定・規約','AIプロバイダー、アカウント権限、規約、バックアップを管理します。')+'<div class="grid cols-2"><div class="card"><h3>AI設定</h3><p>本番ではAI APIキーを画面に保存せず、Cloudflare Workers / Firebase Functions側で管理します。Firebase Authはv1.6で接続済みです。</p><div class="field"><label>標準生成</label><select class="select"><option>Gemini 2.5 Flash</option><option>OpenAI GPT-5.4 mini</option><option>自動選択</option></select></div><div class="field"><label>高品質生成</label><select class="select"><option>OpenAI GPT-5.4 mini</option><option>GPT-5.5</option><option>Gemini 2.5 Flash</option></select></div><button class="btn btn-primary">設定を保存</button></div><div class="card"><h3>アカウント・料金</h3><div class="plan-card '+(state.user.ownerFree?'owner':'')+'"><div class="list-item-head"><div><b>'+esc(planLabel)+'</b><p style="margin-top:6px">v1.6ではFirebase Authに接続済みです。Firestore連携後はrole / planで制限を判定します。相棒のメールアドレスだけ owner-free を裏側で付与します。</p></div>'+(state.user.ownerFree?'<span class="owner-badge">OWNER FREE</span>':'<span class="pill blue">DEMO</span>')+'</div></div><div style="display:grid;gap:10px;margin-top:12px">'+usageLine('note','note記事生成')+usageLine('kindle','Kindle生成')+usageLine('images','画像プロンプト')+'</div></div><div class="card"><h3>バックアップ</h3><p>ローカル版ではブラウザ内に保存されています。JSONで控えを取れます。</p><div class="btn-row"><button id="exportJson" class="btn btn-soft">JSONバックアップ</button><button id="resetData" class="btn btn-danger">データ初期化</button></div></div><div class="card"><h3>販売版実装メモ</h3><div class="output light">'+esc(memo)+'</div></div></div><div class="card" style="margin-top:18px"><h3>利用規約・プライバシー要点</h3><div class="output light">'+esc(policy)+'</div></div>';
     q('#exportJson').addEventListener('click',function(){download('webrich-story-studio-backup.json',JSON.stringify(state,null,2));toast('JSONを書き出しました')});
     q('#resetData').addEventListener('click',function(){if(confirm('ローカルデータを初期化しますか？')){localStorage.removeItem(STORAGE_KEY);state=defaultState();save();renderAll();toast('初期化しました')}})
   }
